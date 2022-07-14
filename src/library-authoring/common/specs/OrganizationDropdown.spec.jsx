@@ -16,26 +16,21 @@ const initFireEvent = () => {
 
   return map;
 };
+const props = {
+  as: 'input',
+  name: 'OrganizationDropdown',
+  floatingLabel: 'floatingLabel text',
+  options: null,
+  handleFocus: null,
+  handleChange: null,
+  handleBlur: null,
+  value: null,
+  errorMessage: null,
+  errorCode: null,
+  readOnly: false
+};
 
 describe('common/OrganizationDropdown.jsx', () => {
-  let props;
-
-  beforeEach(() => {
-    props = {
-      as: 'input',
-      name: 'OrganizationDropdown',
-      floatingLabel: 'floatingLabel text',
-      options: null,
-      handleFocus: null,
-      handleChange: null,
-      handleBlur: null,
-      value: null,
-      errorMessage: null,
-      errorCode: null,
-      readOnly: false
-    };
-  });
-
   it('renders component without error', () => {
     mount(<OrganizationDropdown {...props} />);
   });
