@@ -8,11 +8,12 @@ import {
   IconButton,
   Card,
   Navbar,
-  Modal,
+  AlertModal,
   Dropdown,
   SearchField,
   Input,
   Pagination,
+  ActionRow,
 } from '@edx/paragon';
 import { Edit } from '@edx/paragon/icons';
 import { v4 as uuid4 } from 'uuid';
@@ -87,14 +88,14 @@ export const BlockPreviewBase = ({
       <Navbar.Collapse className="justify-content-end">
         { library.allow_lti && (
           <>
-            <Button disabled={isLtiUrlGenerating} size="lg" className="mr-1" onClick={() => { props.fetchBlockLtiUrl({ blockId: block.id }); }}>
+            <Button disabled={isLtiUrlGenerating} size="sm" className="mr-1" onClick={() => { props.fetchBlockLtiUrl({ blockId: block.id }); }}>
               <FontAwesomeIcon icon={faClipboard} className="pr-1" />
               {intl.formatMessage(messages['library.detail.block.copy_lti_url'])}
             </Button>
           </>
         )}
         <Link to={editView}>
-          <Button size="lg" className="mr-1">
+          <Button size="sm" className="mr-1">
             <FontAwesomeIcon icon={faEdit} className="pr-1" />
             {intl.formatMessage(messages['library.detail.block.edit'])}
           </Button>
@@ -102,32 +103,33 @@ export const BlockPreviewBase = ({
         { /* Studio has a copy button, but we don't yet. */}
         <Button
           aria-label={intl.formatMessage(messages['library.detail.block.delete'])}
-          size="lg"
+          size="sm"
           onClick={() => setShowDeleteModal(true)}
         >
           <FontAwesomeIcon icon={faTrashAlt} />
         </Button>
       </Navbar.Collapse>
     </Navbar>
-    <Modal
-      open={showDeleteModal}
+    <AlertModal
+      isOpen={showDeleteModal}
       title={intl.formatMessage(messages['library.detail.block.delete.modal.title'])}
-      onClose={() => setShowDeleteModal(false)}
-      body={(
-        <div>
-          <p>
-            {intl.formatMessage(messages['library.detail.block.delete.modal.body'])}
-          </p>
-        </div>
+      footerNode={(
+        <ActionRow>
+          <Button variant="tertiary" size="md" onClick={() => setShowDeleteModal(false)}>
+            {intl.formatMessage(commonMessages['library.common.forms.button.cancel'])}
+          </Button>
+          <Button
+            variant="primary"
+            size="md"
+            onClick={() => props.deleteLibraryBlock({ blockId: block.id })}
+          >
+            {intl.formatMessage(commonMessages['library.common.forms.button.yes'])}
+          </Button>
+        </ActionRow>
       )}
-      buttons={[
-        <Button
-          onClick={() => props.deleteLibraryBlock({ blockId: block.id })}
-        >
-          {intl.formatMessage(commonMessages['library.common.forms.button.yes'])}
-        </Button>,
-      ]}
-    />
+    >
+      {intl.formatMessage(messages['library.detail.block.delete.modal.body'])}
+    </AlertModal>
     {showPreviews && (
       <Card>
         <Card.Body>
@@ -274,11 +276,11 @@ const ButtonTogglesBase = ({
   library, setShowPreviews, showPreviews, sending, quickAddBehavior, intl,
 }) => (
   <>
-    <Button variant="success" className="mr-1" size="lg" disabled={sending} onClick={quickAddBehavior}>
+    <Button variant="success" className="mr-1" size="sm" disabled={sending} onClick={quickAddBehavior}>
       <FontAwesomeIcon icon={faPlus} className="pr-1" />
       {intl.formatMessage(messages[`library.detail.add_${library.type}`])}
     </Button>
-    <Button variant="primary" className="ml-1" onClick={() => setShowPreviews(!showPreviews)} size="lg">
+    <Button variant="primary" className="ml-1" onClick={() => setShowPreviews(!showPreviews)} size="sm">
       <FontAwesomeIcon icon={faSync} className="pr-1" />
       { intl.formatMessage(showPreviews ? messages['library.detail.hide_previews'] : messages['library.detail.show_previews']) }
     </Button>
@@ -351,7 +353,7 @@ const LibraryAuthoringPageHeaderBase = ({intl, library, ...props}) => {
   return (
     <>
       <small className="card-subtitle">{intl.formatMessage(messages['library.detail.page.heading'])}</small>
-      <h1 className="page-header-title">
+      <h2 className="page-header-title">
         {inputIsActive
           ? (
             <Input
@@ -378,7 +380,7 @@ const LibraryAuthoringPageHeaderBase = ({intl, library, ...props}) => {
             </>
           )
         }
-      </h1>
+      </h2>
     </>
   );
 };
@@ -506,15 +508,15 @@ export const LibraryAuthoringPageBase = ({
                 {library.type === LIBRARY_TYPES.COMPLEX && (
                   <Row>
                     <Col xs={12}>
-                      <h2>{intl.formatMessage(messages['library.detail.add_component_heading'])}</h2>
+                      <h3 className="h3">{intl.formatMessage(messages['library.detail.add_component_heading'])}</h3>
                     </Col>
                     <Col xs={12} className="text-center">
                       <div className="d-inline-block">
                         <Dropdown>
-                          <Dropdown.Toggle variant="success" size="lg" disabled={sending} className="cta-button mr-2" id="library-detail-add-component-dropdown">
+                          <Dropdown.Toggle variant="success" size="sm" disabled={sending} className="cta-button mr-2" id="library-detail-add-component-dropdown">
                             Advanced
                           </Dropdown.Toggle>
-                          <Dropdown.Menu size="lg">
+                          <Dropdown.Menu size="sm">
                             {otherTypes.map((blockSpec) => (
                               <Dropdown.Item
                                 onClick={() => addBlock(blockSpec.block_type)}
@@ -526,13 +528,13 @@ export const LibraryAuthoringPageBase = ({
                           </Dropdown.Menu>
                         </Dropdown>
                       </div>
-                      <Button variant="success" size="lg" disabled={sending} onClick={() => addBlock('html')} className="cta-button">
+                      <Button variant="success" size="sm" disabled={sending} onClick={() => addBlock('html')} className="cta-button">
                         HTML
                       </Button>
-                      <Button variant="success" size="lg" disabled={sending} onClick={() => addBlock('problem')} className="cta-button mx-2">
+                      <Button variant="success" size="sm" disabled={sending} onClick={() => addBlock('problem')} className="cta-button mx-2">
                         Problem
                       </Button>
-                      <Button variant="success" size="lg" disabled={sending} onClick={() => addBlock('video')} className="cta-button">
+                      <Button variant="success" size="sm" disabled={sending} onClick={() => addBlock('video')} className="cta-button">
                         Video
                       </Button>
                     </Col>
@@ -563,7 +565,7 @@ export const LibraryAuthoringPageBase = ({
                       </h3>
                     </Col>
                     <Col xs={12} className="text-center py-3">
-                      <Button size="lg" block disabled={!hasChanges} onClick={commitChanges}>
+                      <Button size="sm" block disabled={!hasChanges} onClick={commitChanges}>
                         {intl.formatMessage(messages['library.detail.aside.publish'])}
                       </Button>
                     </Col>
