@@ -10,7 +10,7 @@ import {
   StatefulButton,
   Alert,
   AlertModal,
-  ActionRow
+  ActionRow,
 } from '@edx/paragon';
 import { Info } from '@edx/paragon/icons';
 import { injectIntl, intlShape } from '@edx/frontend-platform/i18n';
@@ -69,11 +69,11 @@ export class LibraryCreatePage extends React.Component {
       && createdLibrary !== null
     ) {
       if (createdLibrary.type === LIBRARY_TYPES.LEGACY) {
-        this.setState({ allowLeave: true }, () => {
+        this.setState({ allowLeave: true }, () => { // eslint-disable-line react/no-did-update-set-state
           window.location.href = createdLibrary.url;
         });
       } else if (Object.values(LIBRARY_TYPES).includes(createdLibrary.type)) {
-        this.setState({ allowLeave: true }, () => {
+        this.setState({ allowLeave: true }, () => { // eslint-disable-line react/no-did-update-set-state
           this.props.history.push(createdLibrary.url);
         });
       }
@@ -104,7 +104,7 @@ export class LibraryCreatePage extends React.Component {
 
   onSubmit = (event) => {
     event.preventDefault();
-    this.props.createLibrary({ data: {...this.state.data, type: LIBRARY_TYPES.COMPLEX} });
+    this.props.createLibrary({ data: { ...this.state.data, type: LIBRARY_TYPES.COMPLEX } });
   }
 
   hasFieldError = (fieldName) => {
@@ -154,7 +154,7 @@ export class LibraryCreatePage extends React.Component {
     if (!this.state.allowLeave) {
       event.preventDefault();
       const pathname = event.target.getAttribute('href');
-      this.openModal({pathname});
+      this.openModal({ pathname });
     }
   }
 
@@ -176,14 +176,14 @@ export class LibraryCreatePage extends React.Component {
 
     if (lastLocation) {
       this.setState({
-        confirmedNavigation: true
+        confirmedNavigation: true,
       }, () => {
         if (lastLocation.pathname === config.STUDIO_BASE_URL) {
           window.location.href = lastLocation.pathname;
         } else {
           this.props.history.push(lastLocation.pathname);
         }
-      })
+      });
     }
   }
 
@@ -212,7 +212,7 @@ export class LibraryCreatePage extends React.Component {
             clickHandler={this.handleClickBreadcrumbs}
             links={[
               { label: intl.formatMessage(messages['library.form.breadcrumbs.home']), url: config.STUDIO_BASE_URL },
-              { label: intl.formatMessage(messages['library.form.breadcrumbs.list']), url: ROUTES.List.HOME }
+              { label: intl.formatMessage(messages['library.form.breadcrumbs.list']), url: ROUTES.List.HOME },
             ]}
           />
           <div className="wrapper-mast wrapper">
@@ -249,7 +249,7 @@ export class LibraryCreatePage extends React.Component {
                         options={orgs}
                         controlClassName="has-value"
                         handleChange={
-                          (value) => this.setState(prevState => ({ data: {...prevState.data, org: value} }))
+                          (value) => this.setState(prevState => ({ data: { ...prevState.data, org: value } }))
                         }
                         floatingLabel={intl.formatMessage(messages['library.form.org.label'])}
                         placeholder={intl.formatMessage(messages['library.form.org.placeholder'])}
@@ -334,6 +334,7 @@ LibraryCreatePage.propTypes = {
   fetchOrganizations: PropTypes.func.isRequired,
   errorFields: PropTypes.object, // eslint-disable-line react/forbid-prop-types
   errorMessage: PropTypes.string,
+  orgs: PropTypes.arrayOf(PropTypes.string),
   history: PropTypes.shape({
     push: PropTypes.func.isRequired,
   }).isRequired,

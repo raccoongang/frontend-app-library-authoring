@@ -5,9 +5,8 @@ import { createMemoryHistory } from 'history';
 import { injectIntl } from '@edx/frontend-platform/i18n';
 import { LibraryCreatePage } from '../LibraryCreatePage';
 import { libraryCreateInitialState } from '../data';
-import { SUBMISSION_STATUS } from '../../common';
+import { SUBMISSION_STATUS, ROUTES } from '../../common';
 import { ctxMount } from '../../common/specs/helpers';
-import { ROUTES } from '../../common';
 
 const InjectedLibraryCreatePage = injectIntl(withRouter(LibraryCreatePage));
 const config = { STUDIO_BASE_URL: 'STUDIO_BASE_URL' };
@@ -21,14 +20,13 @@ const props = {
   fetchOrganizations: mockFetchOrganizations,
 };
 
-
 describe('create-library/LibraryCreatePage.jsx', () => {
   it('renders library create page without error', () => {
     ctxMount(
-        <BrowserRouter>
-          <InjectedLibraryCreatePage {...props} />
-        </BrowserRouter>,
-      {config}
+      <BrowserRouter>
+        <InjectedLibraryCreatePage {...props} />
+      </BrowserRouter>,
+      { config },
     );
   });
 
@@ -37,7 +35,7 @@ describe('create-library/LibraryCreatePage.jsx', () => {
       <BrowserRouter>
         <InjectedLibraryCreatePage {...props} />
       </BrowserRouter>,
-      {config}
+      { config },
     );
 
     expect(mockFetchOrganizations).toHaveBeenCalled();
@@ -49,7 +47,7 @@ describe('create-library/LibraryCreatePage.jsx', () => {
       <BrowserRouter>
         <InjectedLibraryCreatePage {...newProps} />
       </BrowserRouter>,
-      {config}
+      { config },
     );
 
     container.find('input').at(0).simulate('change', { target: { value: 'title test', name: 'title' } });
@@ -63,12 +61,12 @@ describe('create-library/LibraryCreatePage.jsx', () => {
   });
 
   it('submits form with error', () => {
-    const newProps = { ...props, errorFields: {slug: 'Error message'} };
+    const newProps = { ...props, errorFields: { slug: 'Error message' } };
     const container = ctxMount(
       <BrowserRouter>
         <InjectedLibraryCreatePage {...newProps} />
       </BrowserRouter>,
-      {config}
+      { config },
     );
 
     expect(container.find('div[feedback-for="slug"]').text()).toEqual('Error message');
@@ -80,7 +78,7 @@ describe('create-library/LibraryCreatePage.jsx', () => {
       <BrowserRouter>
         <InjectedLibraryCreatePage {...newProps} />
       </BrowserRouter>,
-      {config}
+      { config },
     );
 
     const submitButton = container.find('[type="submit"]').at(0);
@@ -88,7 +86,7 @@ describe('create-library/LibraryCreatePage.jsx', () => {
   });
 
   it('cancels form', () => {
-    const history = createMemoryHistory({initialEntries: [ROUTES.List.CREATE]});
+    const history = createMemoryHistory({ initialEntries: [ROUTES.List.CREATE] });
     jest.spyOn(history, 'push');
 
     const container = ctxMount(
@@ -97,7 +95,7 @@ describe('create-library/LibraryCreatePage.jsx', () => {
           <InjectedLibraryCreatePage {...props} />
         </Router>
       </BrowserRouter>,
-      {config}
+      { config },
     );
 
     const cancelPageButton = container.find('button.btn-light').at(0);
@@ -106,7 +104,7 @@ describe('create-library/LibraryCreatePage.jsx', () => {
   });
 
   it('shows leave modal and prevents leaving', () => {
-    const history = createMemoryHistory({initialEntries: [ROUTES.List.CREATE]});
+    const history = createMemoryHistory({ initialEntries: [ROUTES.List.CREATE] });
     jest.spyOn(history, 'push');
     jest.spyOn(history, 'block');
 
@@ -116,7 +114,7 @@ describe('create-library/LibraryCreatePage.jsx', () => {
           <InjectedLibraryCreatePage {...props} />
         </Router>
       </BrowserRouter>,
-      {config}
+      { config },
     );
 
     const cancelPageButton = container.find('button.btn-light').at(0);
