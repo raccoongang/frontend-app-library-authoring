@@ -67,7 +67,7 @@ const LibraryAccessForm = (
             <StatefulButton
               variant="primary"
               type="submit"
-              size="lg"
+              size="sm"
               state={submitButtonState}
               labels={{
                 disabled: intl.formatMessage(commonMessages['library.common.forms.button.submit']),
@@ -80,7 +80,7 @@ const LibraryAccessForm = (
               disabledStates={['disabled', 'pending']}
               className="font-weight-bold text-uppercase"
             />
-            <Button size="lg" variant="secondary" className="mx-3 font-weight-bold text-uppercase" onClick={() => setShowAdd(false)}>
+            <Button size="sm" variant="secondary" className="mx-3 font-weight-bold text-uppercase" onClick={() => setShowAdd(false)}>
               {intl.formatMessage(commonMessages['library.common.forms.button.cancel'])}
             </Button>
           </Card.Section>

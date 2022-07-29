@@ -40,7 +40,7 @@ const CourseImportListItem = ({
       error: <FontAwesomeIcon icon={faSync} className="icon-inline" />,
     },
     disabledStates: ['pending', 'complete'],
-    className: 'btn-lg',
+    size: 'sm',
     onClick: handleImport,
   };
 
