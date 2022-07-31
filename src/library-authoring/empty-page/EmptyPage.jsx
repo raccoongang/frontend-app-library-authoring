@@ -16,9 +16,14 @@ const EmptyPage = ({
 );
 
 EmptyPage.propTypes = {
-  heading: PropTypes.string.isRequired,
-  body: PropTypes.string.isRequired,
+  heading: PropTypes.string,
+  body: PropTypes.string,
   children: PropTypes.node.isRequired,
+};
+
+EmptyPage.defaultProps = {
+  heading: undefined,
+  body: undefined,
 };
 
 export default EmptyPage;

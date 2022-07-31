@@ -23,7 +23,7 @@ class LibraryBlock extends React.Component {
     this.iframeRef = React.createRef();
     this.state = {
       html: null,
-      iFrameHeight: 400,
+      iFrameHeight: 50,
     };
   }
 
@@ -59,7 +59,13 @@ class LibraryBlock extends React.Component {
       return; // This is some other random message.
     }
 
-    const { method, replyKey, ...args } = event.data;
+    const {
+      method,
+      replyKey,
+      height,
+      ...args
+    } = event.data;
+
     const frame = this.iframeRef.current.contentWindow;
     const sendReply = async (data) => {
       frame.postMessage({ ...data, replyKey }, '*');
@@ -71,7 +77,7 @@ class LibraryBlock extends React.Component {
       const handlerUrl = await this.props.getHandlerUrl(args.usageId);
       sendReply({ handlerUrl });
     } else if (method === 'update_frame_height') {
-      this.setState({ iFrameHeight: args.height });
+      this.setState({ iFrameHeight: height });
     } else if (method.indexOf('xblock:') === 0) {
       // This is a notification from the XBlock's frontend via 'runtime.notify(event, args)'
       if (this.props.onBlockNotification) {
@@ -104,44 +110,55 @@ class LibraryBlock extends React.Component {
       return null;
     }
 
+    const wrapperStyles = {
+      height: `${this.state.iFrameHeight}px`,
+      boxSizing: 'content-box',
+      position: 'relative',
+      overflow: 'hidden',
+      minHeight: '50px',
+      margin: '10px',
+    };
+
+    const iFrameStyles = {
+      position: 'absolute',
+      left: 0,
+      top: 0,
+      width: '100%',
+      height: '100%',
+      minHeight: '50px',
+      border: '0 none',
+      backgroundColor: 'white',
+    };
+
+    const sandboxAttr = [
+      'allow-forms',
+      'allow-modals',
+      'allow-popups',
+      'allow-popups-to-escape-sandbox',
+      'allow-presentation',
+      'allow-same-origin', // This is only secure IF the IFrame source
+      // is served from a completely different domain name
+      // e.g. labxchange-xblocks.net vs www.labxchange.org
+      'allow-scripts',
+      'allow-top-navigation-by-user-activation',
+    ].join(' ');
+
+    // allowing 'autoplay' is required to allow the video XBlock to control the YouTube iframe it has.
+    const iFramePolicy = (
+      'accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture'
+    );
+
     return (
-      <div style={{
-        height: `${this.state.iFrameHeight}px`,
-        boxSizing: 'content-box',
-        position: 'relative',
-        overflow: 'hidden',
-        minHeight: '200px',
-      }}
-      >
+      <div style={wrapperStyles}>
         <iframe
           ref={this.iframeRef}
           title="block"
           src={getConfig().SECURE_ORIGIN_XBLOCK_BOOTSTRAP_HTML_URL}
           data-testid="block-preview"
-          style={{
-            position: 'absolute',
-            left: 0,
-            top: 0,
-            width: '100%',
-            height: '100%',
-            minHeight: '200px',
-            border: '0 none',
-            backgroundColor: 'white',
-          }}
-          // allowing 'autoplay' is required to allow the video XBlock to control the YouTube iframe it has.
-          allow="accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture"
-          sandbox={[
-            'allow-forms',
-            'allow-modals',
-            'allow-popups',
-            'allow-popups-to-escape-sandbox',
-            'allow-presentation',
-            'allow-same-origin', // This is only secure IF the IFrame source
-            // is served from a completely different domain name
-            // e.g. labxchange-xblocks.net vs www.labxchange.org
-            'allow-scripts',
-            'allow-top-navigation-by-user-activation',
-          ].join(' ')}
+          style={iFrameStyles}
+          scrolling="no"
+          allow={iFramePolicy}
+          sandbox={sandboxAttr}
         />
       </div>
     );
