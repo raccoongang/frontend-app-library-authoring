@@ -46,6 +46,7 @@
     "@fortawesome/react-fontawesome": "0.1.17",
     "@popperjs/core": "2.11.2",
     "@reduxjs/toolkit": "1.8.0",
+    "@testing-library/jest-dom": "^5.16.4",
     "core-js": "3.21.1",
     "edx-pattern-library": "0.18.1",
     "eslint-plugin-jsx-a11y": "^6.6.1",

@@ -2,6 +2,11 @@ import { defineMessages } from '@edx/frontend-platform/i18n';
 import { messageGuard } from '../common/data';
 
 const messages = defineMessages({
+  'library.detail.breadcrumbs.LibraryAuthoring': {
+    id: 'library.detail.breadcrumbs.LibraryAuthoring',
+    defaultMessage: 'Library authoring',
+    description: 'Label for the breadcrumbs',
+  },
   'library.detail.page.heading': {
     id: 'library.detail.page.heading',
     defaultMessage: 'Content Library',
@@ -167,6 +172,11 @@ const messages = defineMessages({
     defaultMessage: 'Add Component',
     description: 'Button text for the "Add Component" button on complex libraries.',
   },
+  'library.detail.add.item': {
+    id: 'library.detail.add.item',
+    defaultMessage: 'Add library item',
+    description: 'Button text for the "Add library item" button for adding component.',
+  },
   'library.detail.show_previews': {
     id: 'library.detail.show_previews',
     defaultMessage: 'Show Previews',
@@ -207,6 +217,11 @@ const messages = defineMessages({
       + 'settings for each Randomized Content Block, select this library as the source library, and specify the number '
       + 'of problems to be randomly selected and displayed to each student.',
     description: 'The first (and presently only) paragraph of instructional text about how to use library content.',
+  },
+  'library.detail.header.paging': {
+    id: 'library.detail.header.paging',
+    defaultMessage: 'Showing {start}-{end} out of {collectionCount} total',
+    description: 'Labeled message that shows the pagination options, rendered count components on current page',
   },
 });
 

@@ -315,6 +315,7 @@ export default function wrapBlockHtmlForIFrame(html, resources, lmsBaseUrl) {
       <!-- Capa Problem Editing requires CodeMirror -->
       <link rel="stylesheet" href="${lmsBaseUrl}/static/js/vendor/CodeMirror/codemirror.css">
       <!-- Built-in XBlocks (and some plugins) depends on LMS CSS -->
+      <link rel="stylesheet" href="${lmsBaseUrl}/static/css/lms-main-v1.css">
       <link rel="stylesheet" href="${lmsBaseUrl}/static/css/lms-course.css">
       <!-- Configure and load MathJax -->
       <script type="text/x-mathjax-config">
@@ -376,7 +377,7 @@ export default function wrapBlockHtmlForIFrame(html, resources, lmsBaseUrl) {
     <!-- A Studio-served stylesheet will set the body min-height to 100% (a common strategy to allow for background
     images to fill the viewport), but this has the undesireable side-effect of causing an infinite loop via the
     onResize event listeners in certain situations.  Resetting it to the default "auto" skirts the problem. -->
-    <body style="min-height: auto">
+    <body style="min-height: auto; background: transparent; padding: 12px">
       ${html}
       ${jsTags}
       <script>

@@ -1,3 +1,22 @@
+.library-authoring-wrapper {
+  margin: 0;
+  font-size: 1.4rem;
+
+  .paging-header {
+    display: flex;
+    align-items: center;
+    margin-bottom: 0.5rem;
+
+    p {
+      margin: 0;
+
+      font-size: 0.875rem;
+      line-height: 1.5rem;
+      color: $primary-500;
+    }
+  }
+}
+
 .library-block-wrapper {
   margin: 0;
   font-size: 1.4rem;
@@ -25,4 +44,31 @@
 .library-blocks-pagination {
   display: block;
   margin-top: 1rem;
+}
+
+.block-preview {
+  .pgn__card-header {
+    background: $light-200;
+    border-radius: 0.25rem;
+  }
+
+  .bottom-not-rounded {
+    border-bottom-left-radius: 0;
+    border-bottom-right-radius: 0;
+  }
+
+  .pgn__card-header-content {
+    margin-top: 0;
+    justify-content: center;
+  }
+
+  .pgn__card-header-actions {
+    margin: 0.5rem auto;
+  }
+
+  .pgn__card-header-title-md {
+    @extend %t-strong;
+
+    color: $primary-500;
+  }
 }

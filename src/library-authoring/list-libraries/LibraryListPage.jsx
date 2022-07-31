@@ -3,7 +3,7 @@ import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 import { withRouter } from 'react-router';
 import {
-  Button, Pagination, Breadcrumb, ActionRow, Icon, Card,
+  Button, Pagination, Breadcrumb, ActionRow, Icon, Card, Container,
 } from '@edx/paragon';
 import { Add } from '@edx/paragon/icons';
 import { injectIntl, intlShape } from '@edx/frontend-platform/i18n';
@@ -126,6 +126,7 @@ export class LibraryListPage extends React.Component {
                   <Button
                     variant="outline-primary"
                     onClick={this.goToCreateLibraryPage}
+                    size="sm"
                   >
                     {intl.formatMessage(messages['library.list.new.library'])}
                   </Button>
@@ -211,9 +212,9 @@ export class LibraryListPage extends React.Component {
     }
 
     return (
-      <div className="container-fluid">
+      <Container fluid>
         {content}
-      </div>
+      </Container>
     );
   }
 }

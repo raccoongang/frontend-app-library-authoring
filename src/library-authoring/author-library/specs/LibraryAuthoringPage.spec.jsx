@@ -1,6 +1,7 @@
 import * as React from 'react';
-import { act, screen } from '@testing-library/react';
-import { fireEvent, waitFor } from '@testing-library/dom';
+import '@testing-library/jest-dom';
+import { screen } from '@testing-library/react';
+import { waitFor, fireEvent } from '@testing-library/dom';
 import {
   ctxRender,
   makeN,
@@ -11,17 +12,15 @@ import {
   blockStateFactory,
   libraryFactory,
 } from '../../common/specs/factories';
-import LibraryAuthoringPageContainer from '../LibraryAuthoringPage';
+import LibraryAuthoringContainer from '../LibraryAuthoringContainer';
 import { LIBRARY_TYPES, LOADING_STATUS, STORE_NAMES } from '../../common/data';
 import {
   clearLibrary,
-  commitLibraryChanges,
   createBlock,
   fetchLibraryDetail,
-  revertLibraryChanges,
-  searchLibrary,
   fetchBlockLtiUrl,
   libraryAuthoringActions,
+  searchLibrary,
 } from '../data';
 import { HTML_TYPE, PROBLEM_TYPE, VIDEO_TYPE } from '../../common/specs/constants';
 import {
@@ -29,7 +28,7 @@ import {
 } from '../../edit-block/data';
 import {
   updateLibrary,
-} from '../../configure-library/data'
+} from '../../configure-library/data';
 
 // Reducing function which is used to take an array of blocks and creates an object with keys that are their ids and
 // values which are state for interacting with that block.
@@ -37,7 +36,7 @@ const toBlockInfo = (current, value) => ({ ...current, [value.id]: blockStateFac
 
 const paginationParams = {
   page: 1,
-  page_size: 20,
+  page_size: +process.env.LIBRARY_AUTHORING_PAGINATION_PAGE_SIZE,
 };
 
 const genState = (library, blocks = []) => (
@@ -64,16 +63,76 @@ const genState = (library, blocks = []) => (
 );
 
 const render = (library, ctxSettings) => ctxRender(
-  <LibraryAuthoringPageContainer
+  <LibraryAuthoringContainer
     match={{ params: { libraryId: library.id } }}
   />,
   ctxSettings,
 );
 
-testSuite('<LibraryAuthoringPageContainer />', () => {
+testSuite('author-library/LibraryAuthoringContainer.jsx', () => {
+  it('render paging header', async () => {
+    const { page_size: pageSize } = paginationParams;
+    const nBlocks = pageSize * 2;
+    const library = libraryFactory();
+    const blocks = makeN(blockFactoryLine([], { library }), nBlocks);
+    await render(library, genState(library, blocks));
+    expect(screen.getByText(`Showing 1-${pageSize} out of ${nBlocks} total`)).toBeTruthy();
+
+    const arrowLeftButton = screen.getByRole('button', { name: /Arrow left/i });
+    expect(arrowLeftButton).toBeTruthy();
+    expect(arrowLeftButton).toBeDisabled();
+
+    const arrowRightButton = screen.getByRole('button', { name: /Arrow right/i });
+    expect(arrowRightButton).toBeTruthy();
+    expect(arrowRightButton).toBeEnabled();
+  });
+
+  it('render the state control button on paging header', async () => {
+    const { page_size: pageSize } = paginationParams;
+    const nBlocks = pageSize * 3;
+    const library = libraryFactory();
+    const blocks = makeN(blockFactoryLine([], { library }), nBlocks);
+    await render(library, genState(library, blocks));
+    expect(screen.getByText(`Showing 1-${pageSize} out of ${nBlocks} total`)).toBeTruthy();
+
+    const arrowLeftButton = screen.getByRole('button', { name: /Arrow left/i });
+    const arrowRightButton = screen.getByRole('button', { name: /Arrow right/i });
+
+    fireEvent.click(arrowRightButton);
+    expect(screen.getByText(`Showing ${pageSize + 1}-${pageSize * 2} out of ${nBlocks} total`)).toBeTruthy();
+
+    fireEvent.click(arrowRightButton);
+    expect(screen.getByText(`Showing ${(pageSize * 2) + 1}-${nBlocks} out of ${nBlocks} total`)).toBeTruthy();
+    expect(arrowRightButton).toBeDisabled();
+
+    fireEvent.click(arrowLeftButton);
+    expect(screen.getByText(`Showing ${pageSize + 1}-${pageSize * 2} out of ${nBlocks} total`)).toBeTruthy();
+    expect(arrowRightButton).toBeEnabled();
+  });
+
+  it('paginates blocks on library authoring page', async () => {
+    const { page_size: pageSize } = paginationParams;
+    const nBlocks = pageSize * 2;
+    const library = libraryFactory();
+    const blocks = makeN(blockFactoryLine([], { library }), nBlocks);
+    await render(library, genState(library, blocks));
+
+    const secondPage = screen.getByRole('button', { name: /Page 2/i });
+
+    fireEvent.click(secondPage);
+    expect(screen.getByText(`Showing ${pageSize + 1}-${nBlocks} out of ${nBlocks} total`)).toBeTruthy();
+
+    expect(searchLibrary.fn).toHaveBeenNthCalledWith(1, {
+      libraryId: library.id,
+      paginationParams,
+      query: '',
+      types: [],
+    });
+  });
+
   it('Fetches a library when missing', async () => {
     await ctxRender(
-      <LibraryAuthoringPageContainer
+      <LibraryAuthoringContainer
         match={{ params: { libraryId: 'testtest' } }}
       />,
     );
@@ -84,7 +143,7 @@ testSuite('<LibraryAuthoringPageContainer />', () => {
 
   it('Fetches a library when the current library does not match', async () => {
     await ctxRender(
-      <LibraryAuthoringPageContainer
+      <LibraryAuthoringContainer
         match={{ params: { libraryId: 'testtest' } }}
       />,
       genState(libraryFactory()),
@@ -178,57 +237,11 @@ testSuite('<LibraryAuthoringPageContainer />', () => {
     expect(copyToClipboardButtons.length).toBe(0);
   });
 
-  it('Adds a predefined block type', async () => {
-    const library = libraryFactory({ type: LIBRARY_TYPES.VIDEO });
-    await render(library, genState(library));
-    const addButtons = screen.getAllByText('Add Video');
-    // One's hidden by CSS, but the testing library wouldn't know that.
-    expect(addButtons.length).toBe(3);
-    addButtons[0].click();
-    expect(createBlock.fn).toHaveBeenCalledWith({
-      libraryId: library.id,
-      data: {
-        block_type: VIDEO_TYPE.block_type,
-        definition_id: expect.any(String),
-      },
-      query: '',
-      types: [],
-      paginationParams,
-    });
-  });
-
-  it('Adds a custom block type', async () => {
-    const library = libraryFactory({
-      blockTypes: [{ display_name: 'Test Type', block_type: 'test' }],
-      type: LIBRARY_TYPES.COMPLEX,
-    });
-    await render(library, genState(library));
-    screen.getByText('Advanced').click();
-    const typeOption = await screen.findByText('Test Type', { ignore: 'option' });
-    act(() => {
-      typeOption.click();
-    });
-    await waitFor(() => expect(createBlock.fn).toHaveBeenCalledWith({
-      libraryId: library.id,
-      data: {
-        block_type: 'test',
-        definition_id: expect.any(String),
-      },
-      query: '',
-      types: [],
-      paginationParams,
-    }));
-  });
-
   [VIDEO_TYPE, PROBLEM_TYPE, HTML_TYPE].forEach((blockDef) => {
     it(`Adds a ${blockDef.display_name} block to a library`, async () => {
       const library = libraryFactory({ type: LIBRARY_TYPES.COMPLEX });
       await render(library, genState(library));
-      screen.getByText('Advanced').click();
-      const typeOption = await screen.findByText(blockDef.display_name, { ignore: 'option' });
-      act(() => {
-        typeOption.click();
-      });
+      screen.getByText(blockDef.display_name).click();
       expect(createBlock.fn).toHaveBeenCalledWith({
         libraryId: library.id,
         data: {
@@ -242,86 +255,12 @@ testSuite('<LibraryAuthoringPageContainer />', () => {
     });
   });
 
-  it('Searches for blocks', async () => {
-    const library = libraryFactory();
-    await render(library, genState(library));
-    const search = screen.getByLabelText('Search...');
-    act(() => {
-      fireEvent.change(search, { target: { value: 'boop' } });
-    });
-    await waitFor(() => expect(searchLibrary.fn).toHaveBeenCalledWith({
-      libraryId: library.id,
-      query: 'boop',
-      types: [],
-      paginationParams,
-    }));
-  });
-
-  it('Filters blocks by type', async () => {
-    const library = libraryFactory();
-    await render(library, genState(library));
-    const filter = screen.getByTestId('filter-dropdown');
-    act(() => {
-      fireEvent.change(filter, { target: { value: 'html' } });
-    });
-    await waitFor(() => expect(searchLibrary.fn).toHaveBeenCalledWith({
-      libraryId: library.id,
-      query: '',
-      types: ['html'],
-      paginationParams,
-    }));
-  });
-
-  it('Filters blocks by other types', async () => {
-    const library = libraryFactory({
-      blockTypes: [
-        { block_type: 'squirrel', display_name: 'Squirrel' },
-        { block_type: 'fox', display_name: 'Fox' },
-        VIDEO_TYPE,
-      ],
-    });
-    await render(library, genState(library));
-    const filter = screen.getByTestId('filter-dropdown');
-    act(() => {
-      fireEvent.change(filter, { target: { value: '^' } });
-    });
-    await waitFor(() => expect(searchLibrary.fn).toHaveBeenCalledWith({
-      libraryId: library.id,
-      query: '',
-      types: ['squirrel', 'fox'],
-      paginationParams,
-    }));
-  });
-
-  it('Commits changes', async () => {
-    const library = libraryFactory({ has_unpublished_changes: true });
-    await render(library, genState(library));
-    screen.getByText('Publish').click();
-    expect(commitLibraryChanges.fn).toHaveBeenCalledWith({ libraryId: library.id });
-  });
-
-  it('Reverts changes', async () => {
-    const library = libraryFactory({ has_unpublished_changes: true });
-    await render(library, genState(library));
-    screen.getByText('Discard changes').click();
-    expect(revertLibraryChanges.fn).toHaveBeenCalledWith({
-      libraryId: library.id,
-      paginationParams,
-    });
-  });
-
   it('Deletes a block', async () => {
     const library = libraryFactory();
     const block = blockFactory(undefined, { library });
     await render(library, genState(library, [block]));
-    const del = screen.getByLabelText('Delete');
-    act(() => {
-      del.click();
-    });
-    const yes = await screen.findByText('Yes.');
-    act(() => {
-      yes.click();
-    });
+    fireEvent.click(screen.getByLabelText('Delete'));
+    fireEvent.click(await screen.findByText('Yes'));
     await waitFor(
       () => expect(deleteLibraryBlock.fn).toHaveBeenCalledWith({ blockId: block.id }),
     );
@@ -331,14 +270,14 @@ testSuite('<LibraryAuthoringPageContainer />', () => {
     const library = libraryFactory();
     const block = blockFactory(undefined, { library });
     await render(library, genState(library, [block]));
-    
-    const editButton = screen.getByRole('button', { name: /edit name button/i })
+
+    const editButton = screen.getByRole('button', { name: /edit name button/i });
     editButton.click();
-    const input = await screen.getByRole('textbox', { name: /title input/i })
-    fireEvent.change(input, {target: {value: 'New title'}});
+    const input = await screen.getByRole('textbox', { name: /title input/i });
+    fireEvent.change(input, { target: { value: 'New title' } });
     fireEvent.focusOut(input);
     await waitFor(
-      () => expect(updateLibrary.fn).toHaveBeenCalledWith({ data: { title: 'New title', libraryId: library.id }}),
+      () => expect(updateLibrary.fn).toHaveBeenCalledWith({ data: { title: 'New title', libraryId: library.id } }),
     );
   });
 });
