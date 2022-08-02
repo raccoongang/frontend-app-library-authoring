@@ -9,7 +9,7 @@ import { SUBMISSION_STATUS, ROUTES } from '../../common';
 import { ctxMount } from '../../common/specs/helpers';
 
 const InjectedLibraryCreatePage = injectIntl(withRouter(LibraryCreatePage));
-const config = { STUDIO_BASE_URL: 'STUDIO_BASE_URL' };
+const config = { STUDIO_BASE_URL: 'STUDIO_BASE_URL', BASE_URL: 'BASE_URL' };
 const mockResetForm = jest.fn();
 const mockCreateLibrary = jest.fn();
 const mockFetchOrganizations = jest.fn();
