@@ -178,7 +178,7 @@ export class LibraryCreatePage extends React.Component {
       this.setState({
         confirmedNavigation: true,
       }, () => {
-        if (lastLocation.pathname === config.STUDIO_BASE_URL) {
+        if (lastLocation.pathname === config.STUDIO_BASE_URL || lastLocation.pathname === config.BASE_URL) {
           window.location.href = lastLocation.pathname;
         } else {
           this.props.history.push(lastLocation.pathname);
@@ -212,7 +212,7 @@ export class LibraryCreatePage extends React.Component {
             clickHandler={this.handleClickBreadcrumbs}
             links={[
               { label: intl.formatMessage(messages['library.form.breadcrumbs.home']), url: config.STUDIO_BASE_URL },
-              { label: intl.formatMessage(messages['library.form.breadcrumbs.list']), url: ROUTES.List.HOME },
+              { label: intl.formatMessage(messages['library.form.breadcrumbs.list']), url: config.BASE_URL }
             ]}
           />
           <div className="wrapper-mast wrapper">
