@@ -210,6 +210,7 @@ const LibraryAuthoringPageHeaderBase = ({ intl, library, ...props }) => {
 LibraryAuthoringPageHeaderBase.propTypes = {
   intl: intlShape.isRequired,
   library: libraryShape.isRequired,
+  updateLibrary: PropTypes.func.isRequired,
 };
 
 const LibraryAuthoringPageHeader = connect(
