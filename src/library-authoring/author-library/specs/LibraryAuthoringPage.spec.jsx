@@ -173,9 +173,11 @@ testSuite('author-library/LibraryAuthoringContainer.jsx', () => {
     const library = libraryFactory();
     const blocks = [blockFactory(undefined, { library })];
     await render(library, genState(library, blocks));
-    expect(screen.getByTestId('block-preview')).toBeTruthy();
+    const blockPreview = screen.getByTestId('block-preview');
+    expect(blockPreview).toBeTruthy();
+
     screen.getAllByText('Hide Previews')[0].click();
-    await waitFor(() => expect(() => screen.getByTestId('block-preview')).toThrow());
+    expect(blockPreview).not.toBeVisible();
     expect(localStorage.getItem('showPreviews')).toBe('false');
   });
 

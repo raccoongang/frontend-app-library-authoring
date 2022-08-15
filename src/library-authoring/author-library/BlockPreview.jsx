@@ -60,7 +60,7 @@ const BlockPreviewBase = ({
     <Card className="block-preview">
       <Card.Header
         title={block.display_name}
-        className={showPreviews && 'bottom-not-rounded'}
+        className={showPreviews ? 'bottom-not-rounded' : ''}
         actions={(
           <ActionRow>
             {library.allow_lti && (
@@ -93,18 +93,16 @@ const BlockPreviewBase = ({
           </ActionRow>
         )}
       />
-      {showPreviews && (
-        <>
-          <Card.Divider />
-          <Card.Body>
-            <LibraryBlock
-              getHandlerUrl={getHandlerUrl}
-              view={view}
-              key={previewKey}
-            />
-          </Card.Body>
-        </>
-      )}
+      <div hidden={!showPreviews}>
+        <Card.Divider />
+        <Card.Body>
+          <LibraryBlock
+            getHandlerUrl={getHandlerUrl}
+            view={view}
+            key={previewKey}
+          />
+        </Card.Body>
+      </div>
     </Card>
     <AlertModal
       isOpen={showDeleteModal}
