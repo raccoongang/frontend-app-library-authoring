@@ -120,24 +120,19 @@ export class LibraryCreatePage extends React.Component {
     this.props.createLibrary({ data: { ...this.state.data, type: LIBRARY_TYPES.COMPLEX } });
   }
 
-  hasFieldError = (fieldName) => {
-    const { errors } = this.state;
-
-    return (fieldName in errors);
-  }
-
-  getFieldError = (fieldName) => {
-    if (this.state.errors[fieldName]) {
-      return this.state.errors[fieldName];
-    }
-
-    return null;
-  }
+  getFieldError = (fieldName) => (fieldName in this.state.errors ? this.state.errors[fieldName] : null);
 
   handleOnBlur = (e) => {
     const { name, value } = e.target;
 
     this.validateInput(name, value, this.state.data);
+  }
+
+  handleOnChangeOrg = (value) => {
+    this.setState(prevState => ({
+      data: { ...prevState.data, org: value },
+      errors: { ...prevState.errors, org: value ? '' : prevState.errors.org },
+    }));
   }
 
   getSubmitButtonState = () => {
@@ -301,13 +296,9 @@ export class LibraryCreatePage extends React.Component {
                         options={orgs}
                         controlClassName="has-value"
                         handleBlur={this.handleOnBlur}
-                        handleChange={
-                          (value) => this.setState(prevState => ({ data: { ...prevState.data, org: value }, errors: { ...prevState.errors, org: value ? '' : prevState.errors.org } }))
-                        }
+                        handleChange={this.handleOnChangeOrg}
                         floatingLabel={intl.formatMessage(messages['library.form.org.label'])}
                         placeholder={intl.formatMessage(messages['library.form.org.placeholder'])}
-                        hasFieldError={this.hasFieldError('org')}
-                        errorMessage2="ERROR dropdown"
                         errorMessage={this.getFieldError('org')}
                         helpMessage={intl.formatMessage(messages['library.form.org.help'])}
                       />

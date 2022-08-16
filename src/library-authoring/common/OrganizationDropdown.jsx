@@ -62,7 +62,6 @@ class OrganizationDropdown extends React.Component {
   }
 
   setValue(value) {
-    // console.log('setValue', value);
     if (this.props.value === value) {
       return;
     }
