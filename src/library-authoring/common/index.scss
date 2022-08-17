@@ -42,3 +42,24 @@
   font-size: 0.9rem;
   line-height: 1.25rem;
 }
+
+.announcement-modal {
+  max-width: 34.25rem;
+
+  .pgn__modal-hero {
+    min-height: 17.188rem;
+  }
+
+  .pgn__modal-title {
+    margin-bottom: 1.125rem;
+  }
+
+  .pgn__modal-body {
+    @include font-size(18);
+    @include line-height(28);
+
+    overflow: visible;
+    color: $gray-700;
+    padding-bottom: 0.875rem;
+  }
+}
