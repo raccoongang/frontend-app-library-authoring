@@ -15,6 +15,7 @@ import { NotFoundPage } from './generic';
 import {
   AboutLibrariesHyperlink,
   ROUTES,
+  AnnouncementModal,
   CourseImportPage,
   LibraryBlockPage,
   LibraryEditPage,
@@ -37,6 +38,7 @@ subscribe(APP_READY, () => {
   ReactDOM.render(
     <AppProvider store={store}>
       <div className="wrapper">
+        <AnnouncementModal />
         <StudioHeader />
         <main>
           <Switch>

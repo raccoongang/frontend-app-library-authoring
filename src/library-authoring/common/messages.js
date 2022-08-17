@@ -171,6 +171,27 @@ const messages = defineMessages({
     defaultMessage: 'No options',
     description: 'Text for empty organizations options list.',
   },
+  'announcement.modal.title': {
+    id: 'announcement.modal.title',
+    defaultMessage: 'Library authoring has a new look!',
+    description: 'Text for heading of announcement modal.',
+  },
+  'announcement.modal.content': {
+    id: 'announcement.modal.content',
+    defaultMessage: 'As part of our commitment to continuous improvement we’ve updated the library authoring '
+    + 'experience with a fresh new look. Don’t worry, all of your favorite features are still here!',
+    description: 'Text for body content of announcement modal.',
+  },
+  'announcement.modal.button.close': {
+    id: 'announcement.modal.button.close',
+    defaultMessage: 'Dismiss',
+    description: 'Text for close button.',
+  },
+  'announcement.modal.button.learn_more': {
+    id: 'announcement.modal.button.learn_more',
+    defaultMessage: 'Learn more',
+    description: 'Text for button about additional information.',
+  },
 });
 
 export default messageGuard(messages);
