@@ -44,3 +44,9 @@ export async function getLibraryList(params) { // eslint-disable-line import/pre
     count: response.count,
   };
 }
+
+export async function deleteLibrary(libraryId) {
+  const client = getAuthenticatedHttpClient();
+  const baseUrl = getConfig().STUDIO_BASE_URL;
+  return client.delete(`${baseUrl}/api/libraries/v2/${libraryId}/`);
+}

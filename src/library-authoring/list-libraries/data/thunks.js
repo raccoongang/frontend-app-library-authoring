@@ -17,4 +17,13 @@ const fetchLibraryList = ({ params }) => async (dispatch) => {
   }
 };
 
+export const deleteLibrary = (libraryId) => async (dispatch) => {
+  try {
+    await api.deleteLibrary(libraryId);
+  } catch (error) {
+    dispatch(actions.libraryListFailed({ errorMessage: error.message }));
+    logError(error);
+  }
+};
+
 export default fetchLibraryList;
