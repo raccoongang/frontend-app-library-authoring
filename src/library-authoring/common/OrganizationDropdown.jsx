@@ -16,7 +16,7 @@ class OrganizationDropdown extends React.Component {
       isFocused: false,
       displayValue: '',
       icon: this.expandMoreButton(),
-      dropDownItems: [],
+      dropDownItems: '',
     };
 
     this.handleFocus = this.handleFocus.bind(this);
@@ -89,10 +89,11 @@ class OrganizationDropdown extends React.Component {
   }
 
   handleClick = (e) => {
-    const dropDownItems = this.getItems(e.target.value);
-    if (dropDownItems.length > 1) {
-      this.setState({ dropDownItems, icon: this.expandLessButton() });
+    let dropDownItems = this.getItems(e.target.value);
+    if (!dropDownItems.length) {
+      dropDownItems = [this.noOptionsMessage()];
     }
+    this.setState({ dropDownItems, icon: this.expandLessButton() });
 
     if (this.state.dropDownItems.length > 0) {
       this.setState({ dropDownItems: '', icon: this.expandMoreButton() });
@@ -126,7 +127,10 @@ class OrganizationDropdown extends React.Component {
   }
 
   handleExpandMore(e) {
-    const dropDownItems = this.getItems(e.target.value);
+    let dropDownItems = this.getItems(e.target.value);
+    if (!dropDownItems.length) {
+      dropDownItems = [this.noOptionsMessage()];
+    }
     this.setState({ dropDownItems, icon: this.expandLessButton() });
   }
 
@@ -173,13 +177,16 @@ class OrganizationDropdown extends React.Component {
     );
   }
 
-  render() {
-    const noOptionsMessage = (
+  noOptionsMessage() {
+    return (
       <button className="dropdown-item" type="button" disabled>
         {this.props.intl.formatMessage(messages['library.organizations.list.empty'])}
       </button>
     );
-    const dropDownEmptyList = this.state.dropDownItems && this.state.isFocused ? noOptionsMessage : null;
+  }
+
+  render() {
+    const dropDownEmptyList = this.state.dropDownItems && this.state.isFocused ? this.noOptionsMessage() : null;
     return (
       <div className="dropdown-group-wrapper">
         <FormGroup
