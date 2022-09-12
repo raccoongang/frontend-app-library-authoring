@@ -135,6 +135,21 @@ const messages = defineMessages({
     defaultMessage: 'Libraries',
     description: 'Label for the breadcrumbs parent link.',
   },
+  'library.list.delete': {
+    id: 'library.list.delete',
+    defaultMessage: 'Delete',
+    description: 'Aria label for delete button.',
+  },
+  'library.list.delete.modal.title': {
+    id: 'library.list.delete.modal.title',
+    defaultMessage: 'Delete this component?',
+    description: 'Title bar for the block deletion modal.',
+  },
+  'library.list.delete.modal.body': {
+    id: 'library.list.delete.modal.body',
+    defaultMessage: 'Deleting this component is permanent and cannot be undone.',
+    description: 'Body for the block deletion modal.',
+  },
 });
 
 export default messageGuard(messages);
