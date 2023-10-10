@@ -194,7 +194,7 @@ class LibraryBlockPage extends React.Component {
       case ROUTES.Block.LEARN: {
         this.props.fetchLibraryBlockView({
           blockId,
-          viewSystem: XBLOCK_VIEW_SYSTEM.LMS,
+          viewSystem: XBLOCK_VIEW_SYSTEM.Studio,
           viewName: 'student_view',
         });
         break;
